@@ -29,6 +29,6 @@ velocity sum_of_velocity(velocity const&, velocity const&);
 
 position cm(std::vector<boid> const&, int);
 
-velocity cohesion(double, position const&, position const&);
+velocity cohesion(double, position const&, boid const&);
 
 #endif
