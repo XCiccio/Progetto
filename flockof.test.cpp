@@ -72,3 +72,33 @@ TEST_CASE("Testing the cm 1")
   CHECK(cmcheck.x == doctest::Approx(4.0));
   CHECK(cmcheck.y == doctest::Approx(6.0));
 }
+
+TEST_CASE("Testing the cm 2")
+{
+  const std::vector<boid> vec{{{0.0, 0.0}, {1.0, 4.0}},
+                              {{0.0, 0.0}, {1.0, 4.0}}};
+  const int N{2};
+  const position cmcheck = cm(vec, N);
+  CHECK(cmcheck.x == doctest::Approx(0.0));
+  CHECK(cmcheck.y == doctest::Approx(0.0));
+}
+
+TEST_CASE("Testing the cohesion 1")
+{
+  const boid b{{(1.0), (4.0)}, {(1.0), (4.0)}};
+  const double c{0.5};
+  const position CM{-3.0, -2.0};
+  const velocity v1 = cohesion(c, CM, b);
+  CHECK(v1.v_x == doctest::Approx(-2.0));
+  CHECK(v1.v_y == doctest::Approx(-3.0));
+}
+
+TEST_CASE("Testing the cohesion 2")
+{
+const boid b{{(5.0), (2.0)}, {(1.0), (4.0)}};
+  const double c{0.5};
+  const position CM{5.0, 2.0};
+  const velocity v1 = cohesion(c, CM, b);
+  CHECK(v1.v_x == doctest::Approx(0.0));
+  CHECK(v1.v_y == doctest::Approx(0.0));
+}
