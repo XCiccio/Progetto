@@ -1,1 +1,3 @@
-ciao 
+int main(){
+  return o;
+}
