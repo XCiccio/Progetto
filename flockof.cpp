@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <iostream>
 #include <numeric>
+#include <random>
 
 double distance(position const& a, position const& b)
 {
@@ -31,4 +32,33 @@ position cm(std::vector<boid> const& boids, int N)
 velocity cohesion(double c, position const& CM, boid const& b)
 {
   return {c * (vector_distance(CM, b.pb).x), c * (vector_distance(CM, b.pb).y)};
+}
+
+velocity alignment(double a, boid const& b, std::vector<boid> const& v, int N)
+{
+  double sum_x =
+      std::accumulate(v.begin(), v.end(), 0., [&b](double res, boid b_puff) {
+        return res + (b.vb.v_x - b_puff.vb.v_x);
+      });
+  double sum_y =
+      std::accumulate(v.begin(), v.end(), 0., [&b](double res, boid b_puff) {
+        return res + (b.vb.v_y - b_puff.vb.v_y);
+      });
+  return {(a / (N - 1)) * sum_x, (a / (N - 1)) * sum_y};
+}
+
+velocity separation(double s, double ds, boid const& b,
+                    std::vector<boid> const& v)
+{
+  double sum_x = std::accumulate(
+      v.begin(), v.end(), 0., [&b, ds](double res, boid b_puff) {
+        return distance(b.pb, b_puff.pb) < ds ? res + (b.pb.x - b_puff.pb.x)
+                                              : 0.;
+      });
+  double sum_y = std::accumulate(
+      v.begin(), v.end(), 0., [&b, ds](double res, boid b_puff) {
+        return distance(b.pb, b_puff.pb) < ds ? res + (b.pb.y - b_puff.pb.y)
+                                              : 0.;
+      });
+  return {(-s) * sum_x, (-s) * sum_y};
 }
