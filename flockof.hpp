@@ -31,4 +31,12 @@ position cm(std::vector<boid> const&, int);
 
 velocity cohesion(double, position const&, boid const&);
 
+velocity alignment(double, boid const&, std::vector<boid> const&, int);
+
+velocity separation(double, double, boid const&, std::vector<boid> const&);
+
+position random_poistion_generator();
+
+velocity random_velocity_generator();
+
 #endif
