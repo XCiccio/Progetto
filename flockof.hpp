@@ -35,7 +35,7 @@ velocity alignment(double, boid const&, std::vector<boid> const&, int);
 
 velocity separation(double, double, boid const&, std::vector<boid> const&);
 
-position random_poistion_generator();
+position random_position_generator();
 
 velocity random_velocity_generator();
 
