@@ -1,6 +1,6 @@
 #include "flockof.hpp"
-#include <math.h>
 #include <algorithm>
+#include <chrono>
 #include <iostream>
 #include <numeric>
 #include <random>
@@ -63,7 +63,6 @@ velocity separation(double s, double ds, boid const& b,
   return {(-s) * sum_x, (-s) * sum_y};
 }
 
-
 position random_position_generator()
 {
   int const N = 2;
@@ -104,3 +103,18 @@ std::vector<boid> boids_generator(int const N)
   return v;
 }
 
+double d_m(std::vector<boid> v, int N)
+{
+  position c_m = cm(v, N);
+  return (std::accumulate(
+             v.begin(), v.end(), 0.,
+             [c_m](double res, boid a) { return res + distance(a.pb, c_m); }))
+       / N;
+}
+double v_m(std::vector<boid> v, int N)
+{
+  return (std::accumulate(
+             v.begin(), v.end(), 0.,
+             [](double res, boid a) { return res + a.vb.module(); }))
+       / N;
+}
