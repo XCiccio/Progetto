@@ -6,9 +6,14 @@ int main()
   std::cout << "How many boids do you want to generate? \n";
   int N;
   std::cin >> N;
+  double s;
+  double ds;
+  double a;
+  double c;
   std::vector v = boids_generator(N);
-  for (int i = 0; i != N; i++) {
-    std::cout << v[i].pb.x << " " << v[i].pb.y << " " << v[i].vb.v_x << " "
-              << v[i].vb.v_y << '\n';
+  for (auto it = v.begin(), end = v.end(); it != end; ++it) {
+    auto boid = *it;
+    boid.vb   = boid.vb + separation(s, ds, boid, v) +
   }
 }
+
