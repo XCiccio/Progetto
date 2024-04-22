@@ -62,3 +62,45 @@ velocity separation(double s, double ds, boid const& b,
       });
   return {(-s) * sum_x, (-s) * sum_y};
 }
+
+
+position random_position_generator()
+{
+  int const N = 2;
+  std::vector<double> v;
+  v.reserve(N);
+  auto seed = static_cast<long unsigned int>(
+      std::chrono::system_clock::now().time_since_epoch().count());
+  std::default_random_engine generator(seed);
+  std::generate_n(std::back_inserter(v), N, [&] {
+    std::uniform_real_distribution<double> dist(-5, 5);
+    return dist(generator);
+  });
+  return {v[0], v[1]};
+}
+
+velocity random_velocity_generator()
+{
+  int const N = 2;
+  std::vector<double> v;
+  v.reserve(N);
+  auto seed = static_cast<long unsigned int>(
+      std::chrono::system_clock::now().time_since_epoch().count());
+  std::default_random_engine generator(seed);
+  std::generate_n(std::back_inserter(v), N, [&] {
+    std::uniform_real_distribution<double> dist(-5, 5);
+    return dist(generator);
+  });
+  return {v[0], v[1]};
+}
+
+std::vector<boid> boids_generator(int const N)
+{
+  std::vector<boid> v;
+  v.reserve(static_cast<long unsigned int>(N));
+  for (long unsigned int it{0}; it != static_cast<long unsigned int>(N); ++it) {
+    v[it] = {random_position_generator(), random_velocity_generator()};
+  }
+  return v;
+}
+
