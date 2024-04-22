@@ -39,4 +39,6 @@ position random_position_generator();
 
 velocity random_velocity_generator();
 
+std::vector<boid> boids_generator(int);
+
 #endif
