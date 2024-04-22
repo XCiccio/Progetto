@@ -25,7 +25,7 @@ string(APPEND CMAKE_EXE_LINKER_FLAGS_DEBUG " -fsanitize=address,undefined -fno-o
 if (BUILD_TESTING)
 
   # aggiungi l'eseguibile all.t
-   add_executable(flockof.t flockof.test.cpp flockof.cpp)
+   add_executable(flockof.t flockof.cpp mainflockof.cpp)
   # aggiungi l'eseguibile all.t alla lista dei test
    add_test(NAME flockof.t COMMAND flockof.t)
 
