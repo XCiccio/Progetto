@@ -5,38 +5,89 @@
 #include <numeric>
 #include <random>
 
+position operator+(position const& a, position const& b)
+{
+  position sum{a};
+  return sum += b;
+}
+
+position operator-(position const& a, position const& b)
+{
+  position sum{a};
+  return sum -= b;
+}
+
+position operator/(position const& a, int N)
+{
+  return {(a.x) / N, (a.y) / N};
+}
+
+position operator*(double p, position const& a)
+{
+  return {(a.x) * p, (a.y) * p};
+}
+
+velocity operator+(velocity const& a, velocity const& b)
+{
+  velocity sum{a};
+  return sum += b;
+}
+velocity operator-(velocity const& a, velocity const& b)
+{
+  velocity sum{a};
+  return sum -= b;
+}
+
+velocity operator*(double a, velocity const& b)
+{
+  return {(b.v_x) * a, (b.v_y) * a};
+}
+
 double distance(position const& a, position const& b)
 {
   return std::sqrt(std::pow(a.x - b.x, 2) + std::pow(a.y - b.y, 2));
 }
 
-position vector_distance(position const& a, position const& b)
+/*position vector_distance(position const& a, position const& b)
 {
-  return {a.x - b.x, a.y - b.y};
-}
+  return a - b;
+}*/
 
 velocity sum_of_velocity(velocity const& a, velocity const& b)
 {
-  return {a.v_x + b.v_x, a.v_y + b.v_y};
+  return a + b;
 }
 
 position cm(std::vector<boid> const& boids, int N)
 {
-  auto cm_x = std::accumulate(boids.begin(), boids.end(), 0.,
+  position init{0.0, 0.0};
+  position cm =
+      std::accumulate(boids.begin(), boids.end(), init,
+                      [](position res, boid a) { return res + a.pb; });
+  /*auto cm_x = std::accumulate(boids.begin(), boids.end(), 0.,
                               [](double res, boid a) { return res + a.pb.x; });
   auto cm_y = std::accumulate(boids.begin(), boids.end(), 0.,
                               [](double res, boid a) { return res + a.pb.y; });
-  return {(cm_x) / (N - 1), (cm_y) / (N - 1)};
+  */
+  return (cm) / (N - 1);
 }
 
 velocity cohesion(double c, position const& CM, boid const& b)
 {
-  return {c * (vector_distance(CM, b.pb).x), c * (vector_distance(CM, b.pb).y)};
+  auto cohesion = c * (CM - b.pb);
+  return {cohesion.x, cohesion.y};
+  /*return {c * (vector_distance(CM, b.pb).x), c * (vector_distance(CM,
+   * b.pb).y)};*/
 }
 
 velocity alignment(double a, boid const& b, std::vector<boid> const& v, int N)
 {
-  double sum_x =
+  velocity init{0.0, 0.0};
+  velocity result = std::accumulate(
+      v.begin(), v.end(), init,
+      [&b](velocity res, boid b_puff) { return res + (b_puff.vb - b.vb); });
+  return (a / (N - 1)) * result;
+  /*double sum_x =
       std::accumulate(v.begin(), v.end(), 0., [&b](double res, boid b_puff) {
         return res + (b_puff.vb.v_x - b.vb.v_x);
       });
@@ -44,13 +95,21 @@ velocity alignment(double a, boid const& b, std::vector<boid> const& v, int N)
       std::accumulate(v.begin(), v.end(), 0., [&b](double res, boid b_puff) {
         return res + (b_puff.vb.v_y - b.vb.v_y);
       });
-  return {(a / (N - 1)) * sum_x, (a / (N - 1)) * sum_y};
+  return {(a / (N - 1)) * sum_x, (a / (N - 1)) * sum_y};*/
 }
 
 velocity separation(double s, double ds, boid const& b,
                     std::vector<boid> const& v)
 {
-  double sum_x = std::accumulate(
+  position init{0.0, 0.0};
+  position null_sum{0.0, 0.0};
+  position result = std::accumulate(
+      v.begin(), v.end(), init, [&b, ds, null_sum](position res, boid b_puff) {
+        return distance(b.pb, b_puff.pb) < ds ? res + (b_puff.pb - b.pb)
+                                              : res + null_sum;
+      });
+  return {(-s) * result.x, (-s) * result.y};
+  /*double sum_x = std::accumulate(
       v.begin(), v.end(), 0., [&b, ds](double res, boid b_puff) {
         return distance(b.pb, b_puff.pb) < ds ? res + (b_puff.pb.x - b.pb.x)
                                               : res + 0.;
@@ -60,7 +119,7 @@ velocity separation(double s, double ds, boid const& b,
         return distance(b.pb, b_puff.pb) < ds ? res + (b_puff.pb.y - b.pb.y)
                                               : res + 0.;
       });
-  return {(-s) * sum_x, (-s) * sum_y};
+  return {(-s) * sum_x, (-s) * sum_y};*/
 }
 
 position random_position_generator()
