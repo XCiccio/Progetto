@@ -13,7 +13,27 @@ struct position
 {
   double x;
   double y;
+  position& operator+=(const position& p)
+  {
+    x = x + p.x;
+    y = y + p.y;
+    return *this;
+  }
+  position& operator-=(const position& p)
+  {
+    x = x - p.x;
+    y = y - p.y;
+    return *this;
+  }
 };
+
+position operator+(position const&, position const&);
+
+position operator-(position const&, position const&);
+
+position operator/(position const&, int);
+
+position operator*(position const&, double);
 
 struct velocity
 {
@@ -25,11 +45,23 @@ struct velocity
   }
   velocity& operator+=(const velocity& v)
   {
-    v_x + v.v_x;
-    v_y + v.v_y;
+    v_x = v_x + v.v_x;
+    v_y = v_y + v.v_y;
+    return *this;
+  }
+  velocity& operator-=(const velocity& v)
+  {
+    v_x = v_x - v.v_x;
+    v_y = v_y - v.v_y;
     return *this;
   }
 };
+
+velocity operator+(velocity const&, velocity const&);
+
+velocity operator-(velocity const&, velocity const&);
+
+velocity operator*(double, velocity const&);
 
 class boid
 {
@@ -40,7 +72,7 @@ class boid
 
 double distance(position const&, position const&);
 
-position vector_distance(position const&, position const&);
+/*position vector_distance(position const&, position const&);*/
 
 velocity sum_of_velocity(velocity const&, velocity const&);
 
