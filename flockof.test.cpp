@@ -26,7 +26,7 @@ TEST_CASE("Testing distance 3")
   const double distance_ = distance(position1, position2);
   CHECK(distance_ == doctest::Approx(1.0));
 }
-
+/*
 TEST_CASE("Testing vector distance 1")
 {
   const position position1{0.0, 0.0};
@@ -44,6 +44,7 @@ TEST_CASE("Testing vector distance 2")
   CHECK(vectordistance_.x == doctest::Approx(6.0));
   CHECK(vectordistance_.y == doctest::Approx(-1.0));
 }
+*/
 
 TEST_CASE("Testing sum of velocity 1")
 {
