@@ -157,7 +157,8 @@ std::vector<boid> boids_generator(int const N)
   std::vector<boid> v;
   v.reserve(static_cast<long unsigned int>(N));
   for (long unsigned int it{0}; it != static_cast<long unsigned int>(N); ++it) {
-    v[it] = {random_position_generator(), random_velocity_generator()};
+    boid boid_puff = {random_position_generator(), random_velocity_generator()};
+    v.push_back(boid_puff);
   }
   return v;
 }
