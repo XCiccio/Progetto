@@ -178,3 +178,23 @@ double v_m(std::vector<boid> v, int N)
              [](double res, boid a) { return res + a.vb.module(); }))
        / N;
 }
+
+/*std::vector<boid> update_boids(std::chrono::_V2::steady_clock::time_point now,
+                               std::vector<boid>& v, double s, double ds,
+                               double a, double c, int N)
+{
+  for (auto it = v.begin(), end = v.end(); it != end; ++it) {
+    auto boid = *it;
+    boid.vb += separation(s, ds, boid, v) + alignment(a, boid, v, N)
+             + cohesion(c, cm(v, N), boid);
+    auto time_lasted = std::chrono::duration_cast<std::chrono::milliseconds>(
+                           std::chrono::steady_clock::now() - now)
+                           .count();
+    auto position_velocity =
+        static_cast<double>(time_lasted * 10 ^ -3) * boid.vb;
+    position new_position{position_velocity.v_x, position_velocity.v_y};
+    boid.pb = boid.pb + new_position;
+    *it     = boid;
+  }
+  return v;
+}*/
