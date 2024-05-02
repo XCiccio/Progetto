@@ -48,57 +48,37 @@ double distance(position const& a, position const& b)
   return std::sqrt(std::pow(a.x - b.x, 2) + std::pow(a.y - b.y, 2));
 }
 
-/*position vector_distance(position const& a, position const& b)
-{
-  return a - b;
-}*/
-
 velocity sum_of_velocity(velocity const& a, velocity const& b)
 {
   return a + b;
 }
 
-position cm(std::vector<boid> const& boids, int N)
+position cm(std::vector<boid> const& boids, int const N)
 {
   position init{0.0, 0.0};
   position cm =
       std::accumulate(boids.begin(), boids.end(), init,
                       [](position res, boid a) { return res + a.pb; });
-  /*auto cm_x = std::accumulate(boids.begin(), boids.end(), 0.,
-                              [](double res, boid a) { return res + a.pb.x; });
-  auto cm_y = std::accumulate(boids.begin(), boids.end(), 0.,
-                              [](double res, boid a) { return res + a.pb.y; });
-  */
   return (cm) / (N - 1);
 }
 
-velocity cohesion(double c, position const& CM, boid const& b)
+velocity cohesion(double const c, position const& CM, boid const& b)
 {
   auto cohesion = c * (CM - b.pb);
   return {cohesion.x, cohesion.y};
-  /*return {c * (vector_distance(CM, b.pb).x), c * (vector_distance(CM,
-   * b.pb).y)};*/
 }
 
-velocity alignment(double a, boid const& b, std::vector<boid> const& v, int N)
+velocity alignment(double const a, boid const& b, std::vector<boid> const& v,
+                   int const N)
 {
   velocity init{0.0, 0.0};
   velocity result = std::accumulate(
       v.begin(), v.end(), init,
       [&b](velocity res, boid b_puff) { return res + (b_puff.vb - b.vb); });
   return (a / (N - 1)) * result;
-  /*double sum_x =
-      std::accumulate(v.begin(), v.end(), 0., [&b](double res, boid b_puff) {
-        return res + (b_puff.vb.v_x - b.vb.v_x);
-      });
-  double sum_y =
-      std::accumulate(v.begin(), v.end(), 0., [&b](double res, boid b_puff) {
-        return res + (b_puff.vb.v_y - b.vb.v_y);
-      });
-  return {(a / (N - 1)) * sum_x, (a / (N - 1)) * sum_y};*/
 }
 
-velocity separation(double s, double ds, boid const& b,
+velocity separation(double const s, double const ds, boid const& b,
                     std::vector<boid> const& v)
 {
   position init{0.0, 0.0};
@@ -109,17 +89,6 @@ velocity separation(double s, double ds, boid const& b,
                                               : res + null_sum;
       });
   return {(-s) * result.x, (-s) * result.y};
-  /*double sum_x = std::accumulate(
-      v.begin(), v.end(), 0., [&b, ds](double res, boid b_puff) {
-        return distance(b.pb, b_puff.pb) < ds ? res + (b_puff.pb.x - b.pb.x)
-                                              : res + 0.;
-      });
-  double sum_y = std::accumulate(
-      v.begin(), v.end(), 0., [&b, ds](double res, boid b_puff) {
-        return distance(b.pb, b_puff.pb) < ds ? res + (b_puff.pb.y - b.pb.y)
-                                              : res + 0.;
-      });
-  return {(-s) * sum_x, (-s) * sum_y};*/
 }
 
 position random_position_generator()
@@ -131,7 +100,7 @@ position random_position_generator()
       std::chrono::system_clock::now().time_since_epoch().count());
   std::default_random_engine generator(seed);
   std::generate_n(std::back_inserter(v), N, [&] {
-    std::uniform_real_distribution<double> dist(-5, 5);
+    std::uniform_real_distribution<double> dist(-3, 3);
     return dist(generator);
   });
   return {v[0], v[1]};
@@ -146,7 +115,7 @@ velocity random_velocity_generator()
       std::chrono::system_clock::now().time_since_epoch().count());
   std::default_random_engine generator(seed);
   std::generate_n(std::back_inserter(v), N, [&] {
-    std::uniform_real_distribution<double> dist(-5, 5);
+    std::uniform_real_distribution<double> dist(-2, 2);
     return dist(generator);
   });
   return {v[0], v[1]};
@@ -179,22 +148,37 @@ double v_m(std::vector<boid> v, int N)
        / N;
 }
 
-/*std::vector<boid> update_boids(std::chrono::_V2::steady_clock::time_point now,
-                               std::vector<boid>& v, double s, double ds,
-                               double a, double c, int N)
+std::vector<boid>
+update_boids(std::chrono::_V2::steady_clock::time_point::rep time_lasted,
+             std::vector<boid>& v, double s, double ds, double a, double c,
+             int N)
 {
   for (auto it = v.begin(), end = v.end(); it != end; ++it) {
-    auto boid = *it;
-    boid.vb += separation(s, ds, boid, v) + alignment(a, boid, v, N)
-             + cohesion(c, cm(v, N), boid);
-    auto time_lasted = std::chrono::duration_cast<std::chrono::milliseconds>(
-                           std::chrono::steady_clock::now() - now)
-                           .count();
-    auto position_velocity =
-        static_cast<double>(time_lasted * 10 ^ -3) * boid.vb;
-    position new_position{position_velocity.v_x, position_velocity.v_y};
-    boid.pb = boid.pb + new_position;
-    *it     = boid;
+    auto boid_1 = *it;
+    boid boid_2;
+    if (boid_1.pb.x > 4 || boid_1.pb.x < -4 || boid_1.pb.y > 4
+        || boid_1.pb.y < -4) {
+      boid_2.vb = -1 * boid_1.vb;
+      auto position_velocity =
+          (static_cast<double>(time_lasted) * 0.00000001) * boid_2.vb;
+      position new_position{position_velocity.v_x, position_velocity.v_y};
+      boid_2.pb = boid_1.pb + new_position;
+      *it       = boid_2;
+    } else {
+      boid_2.vb =
+          ((boid_1.vb + separation(s, ds, boid_1, v))
+           + (alignment(a, boid_1, v, N) + cohesion(c, cm(v, N), boid_1)));
+
+      if (boid_2.vb.module() >= 10.) {
+        boid_2.vb = boid_1.vb;
+      }
+
+      auto position_velocity =
+          (static_cast<double>(time_lasted) * 0.00000001) * boid_2.vb;
+      position new_position{position_velocity.v_x, position_velocity.v_y};
+      boid_2.pb = boid_1.pb + new_position;
+      *it       = boid_2;
+    }
   }
   return v;
-}*/
+}
