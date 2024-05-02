@@ -1,6 +1,7 @@
 #ifndef FLOCKOF_HPP
 #define FLOCKOF_HPP
 #include <math.h>
+#include <chrono>
 #include <vector>
 
 struct statistics
@@ -61,7 +62,7 @@ velocity operator+(velocity const&, velocity const&);
 
 velocity operator-(velocity const&, velocity const&);
 
-velocity operator*(double, velocity const&);
+velocity operator*(double const, velocity const&);
 
 class boid
 {
@@ -72,17 +73,17 @@ class boid
 
 double distance(position const&, position const&);
 
-/*position vector_distance(position const&, position const&);*/
-
 velocity sum_of_velocity(velocity const&, velocity const&);
 
 position cm(std::vector<boid> const&, int);
 
-velocity cohesion(double, position const&, boid const&);
+velocity cohesion(double const, position const&, boid const&);
 
-velocity alignment(double, boid const&, std::vector<boid> const&, int);
+velocity alignment(double const, boid const&, std::vector<boid> const&,
+                   int const);
 
-velocity separation(double, double, boid const&, std::vector<boid> const&);
+velocity separation(double const, double const, boid const&,
+                    std::vector<boid> const&);
 
 position random_position_generator();
 
@@ -90,13 +91,12 @@ velocity random_velocity_generator();
 
 std::vector<boid> boids_generator(int);
 
-double d_m(std::vector<boid>, int);
+double d_m(std::vector<boid>, const int);
 
-double v_m(std::vector<boid>, int);
+double v_m(std::vector<boid>, const int);
 
-/*std::vector<boid> update_boids(std::chrono::_V2::steady_clock::time_point,
-                               std::vector<boid>&, double, double, double,
-                               double, int);*/
-
+std::vector<boid> update_boids(std::chrono::_V2::steady_clock::time_point::rep,
+                               std::vector<boid>&, double const, double const,
+                               double const, double const, int const);
 
 #endif
