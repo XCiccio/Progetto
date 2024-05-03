@@ -10,6 +10,13 @@ struct statistics
   double mean_velocity;
 };
 
+struct data
+{
+  double mean;
+  double sigma;
+};
+
+
 struct position
 {
   double x;
@@ -98,5 +105,8 @@ double v_m(std::vector<boid>, const int);
 std::vector<boid> update_boids(std::chrono::_V2::steady_clock::time_point::rep,
                                std::vector<boid>&, double const, double const,
                                double const, double const, int const);
+data position_data_analysis(std::vector<boid> const&, int const);
+
+data velocity_data_analysis(std::vector<boid> const&, int const);
 
 #endif
