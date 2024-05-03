@@ -182,3 +182,32 @@ update_boids(std::chrono::_V2::steady_clock::time_point::rep time_lasted,
   }
   return v;
 }
+
+data position_data_analysis(std::vector<boid> const& v, int const N)
+{
+  auto mean = (std::accumulate(v.begin(), v.end(), 0.,
+                               [&v, N](double res, boid a) {
+                                 return res + distance(a.pb, cm(v, N));
+                               }))
+            / N;
+  auto sum = std::accumulate(
+      v.begin(), v.end(), 0., [&v, N, mean](double res, boid a) {
+        return res + std::pow(distance(a.pb, cm(v, N)) - mean, 2);
+      });
+  auto sigma = std::sqrt(sum / (N - 1));
+  return {mean, sigma};
+}
+
+data velocity_data_analysis(std::vector<boid> const& v, int const N)
+{
+  auto mean = (std::accumulate(
+                  v.begin(), v.end(), 0.,
+                  [&v](double res, boid a) { return res + a.vb.module(); }))
+            / N;
+  auto sum =
+      std::accumulate(v.begin(), v.end(), 0., [&v, mean](double res, boid a) {
+        return res + std::pow(a.vb.module() - mean, 2);
+      });
+  auto sigma(std::sqrt(sum / (N - 1)));
+  return {mean, sigma};
+}
