@@ -1,5 +1,6 @@
 #include "flockof.hpp"
 #include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
 #include <chrono>
 #include <iostream>
 #include <thread>
@@ -26,34 +27,41 @@ int main()
   std::cout << "How many seconds do you want the program to last? \n";
   int desired_duration_seconds;
   std::cin >> desired_duration_seconds;
-  // sf::RenderWindow window(sf::VideoMode(800, 600), "My window");
-  /*sf::RectangleShape boid;
-  sf::Vector2f boidposition(v[0].pb.x, v[0].pb.y);
-  boid.setPosition(boidposition);
-  boid.setSize(sf::Vector2f(50, 50));*/
+  sf::RenderWindow window(sf::VideoMode(800, 600), "My window");
+  sf::RectangleShape boid;
+
+  boid.setSize(sf::Vector2f(5, 5));
   auto start = std::chrono::steady_clock::now();
   // std::vector<boid> v_updated;
-  //  while (window.isOpen())
+  while (window.isOpen()) {
+    // sf::Event event;
+    // while (window.pollEvent(event))
+    for (;;) {
+      auto now = std::chrono::steady_clock::now();
+      auto duration =
+          std::chrono::duration_cast<std::chrono::seconds>(now - start).count();
+      if (duration >= desired_duration_seconds) {
+        break;
+      }
+      auto time_lasted = std::chrono::duration_cast<std::chrono::nanoseconds>(
+                             std::chrono::steady_clock::now() - now)
+                             .count();
+      v = update_boids(time_lasted, v, s, ds, a, c, N);
+      std::cout << "\rDistanza media intermedia dal cm "
+                << position_data_analysis(v, N).mean << '\n';
 
-  for (;;) {
-    auto now = std::chrono::steady_clock::now();
-    auto duration =
-        std::chrono::duration_cast<std::chrono::seconds>(now - start).count();
-    if (duration >= desired_duration_seconds) {
-      break;
+      for ( auto it= v.begin(), last=v.end(); it!=last; it++){
+        
+      }
+      std::cout << v[0].pb.x << '\n';
+      sf::Vector2f boidposition(v[0].pb.x, v[0].pb.y);
+      boid.setPosition(boidposition);
+      window.clear();
+      window.draw(boid);
+      window.display();
     }
-    auto time_lasted = std::chrono::duration_cast<std::chrono::nanoseconds>(
-                           std::chrono::steady_clock::now() - now)
-                           .count();
-    auto v_updated = update_boids(time_lasted, v, s, ds, a, c, N);
-    v              = v_updated;
-    std::cout << "Distanza media intermedia dal cm " << d_m(v, N) << '\n';
-    /*window.clear();
-    window.draw(boid);
-    window.display();*/
-    // window.close();
-  }
-}
 
-// std::this_thread::sleep_for(std::chrono::milliseconds(500));
-//  }
+    window.close();
+  }
+  // std::this_thread::sleep_for(std::chrono::milliseconds(500));
+}
