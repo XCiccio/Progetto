@@ -1,6 +1,5 @@
 #include "flockof.hpp"
 #include <algorithm>
-#include <chrono>
 #include <iostream>
 #include <numeric>
 #include <random>
@@ -100,7 +99,7 @@ position random_position_generator()
       std::chrono::system_clock::now().time_since_epoch().count());
   std::default_random_engine generator(seed);
   std::generate_n(std::back_inserter(v), N, [&] {
-    std::uniform_real_distribution<double> dist(-3, 3);
+    std::uniform_real_distribution<double> dist(0, 800);
     return dist(generator);
   });
   return {v[0], v[1]};
@@ -115,7 +114,7 @@ velocity random_velocity_generator()
       std::chrono::system_clock::now().time_since_epoch().count());
   std::default_random_engine generator(seed);
   std::generate_n(std::back_inserter(v), N, [&] {
-    std::uniform_real_distribution<double> dist(-2, 2);
+    std::uniform_real_distribution<double> dist(-80, 80);
     return dist(generator);
   });
   return {v[0], v[1]};
@@ -132,52 +131,34 @@ std::vector<boid> boids_generator(int const N)
   return v;
 }
 
-double d_m(std::vector<boid> v, int N)
+std::vector<boid> update_boids(std::vector<boid>& v, double s, double ds,
+                               double a, double c, int N)
 {
-  position c_m = cm(v, N);
-  return (std::accumulate(
-             v.begin(), v.end(), 0.,
-             [c_m](double res, boid a) { return res + distance(a.pb, c_m); }))
-       / N;
-}
-double v_m(std::vector<boid> v, int N)
-{
-  return (std::accumulate(
-             v.begin(), v.end(), 0.,
-             [](double res, boid a) { return res + a.vb.module(); }))
-       / N;
-}
-
-std::vector<boid>
-update_boids(std::chrono::_V2::steady_clock::time_point::rep time_lasted,
-             std::vector<boid>& v, double s, double ds, double a, double c,
-             int N)
-{
-  for (auto it = v.begin(), end = v.end(); it != end; ++it) {
-    auto boid_1 = *it;
-    boid boid_2;
-    if (boid_1.pb.x > 4 || boid_1.pb.x < -4 || boid_1.pb.y > 4
-        || boid_1.pb.y < -4) {
-      boid_2.vb = -1 * boid_1.vb;
-      auto position_velocity =
-          (static_cast<double>(time_lasted) * 0.00000001) * boid_2.vb;
+  for (auto& boid : v) {
+    if (boid.pb.x > 800 || boid.pb.x < 0 || boid.pb.y > 800 || boid.pb.y < 0) {
+      auto boid1 = boid;
+      if (boid.pb.x > 800 || boid.pb.x < 0) {
+        boid1.vb.v_x = -1 * boid.vb.v_x;
+      } else {
+        boid1.vb.v_y = -1 * boid.vb.v_y;
+      }
+      auto position_velocity = 0.01666666666666666666666666666667 * boid1.vb;
       position new_position{position_velocity.v_x, position_velocity.v_y};
-      boid_2.pb = boid_1.pb + new_position;
-      *it       = boid_2;
+      boid1.pb = boid.pb + new_position;
+      boid     = boid1;
     } else {
-      boid_2.vb =
-          ((boid_1.vb + separation(s, ds, boid_1, v))
-           + (alignment(a, boid_1, v, N) + cohesion(c, cm(v, N), boid_1)));
+      auto boid1 = boid;
+      boid1.vb   = ((boid.vb + separation(s, ds, boid, v))
+                  + (alignment(a, boid, v, N) + cohesion(c, cm(v, N), boid)));
 
-      if (boid_2.vb.module() >= 10.) {
-        boid_2.vb = boid_1.vb;
+      if (boid1.vb.module() >= 100.) {
+        boid1.vb = boid.vb;
       }
 
-      auto position_velocity =
-          (static_cast<double>(time_lasted) * 0.00000001) * boid_2.vb;
+      auto position_velocity = 0.01666666666666666666666666666667 * boid1.vb;
       position new_position{position_velocity.v_x, position_velocity.v_y};
-      boid_2.pb = boid_1.pb + new_position;
-      *it       = boid_2;
+      boid1.pb = boid.pb + new_position;
+      boid     = boid1;
     }
   }
   return v;
@@ -211,3 +192,4 @@ data velocity_data_analysis(std::vector<boid> const& v, int const N)
   auto sigma(std::sqrt(sum / (N - 1)));
   return {mean, sigma};
 }
+
