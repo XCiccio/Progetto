@@ -2,6 +2,7 @@
 #define FLOCKOF_HPP
 #include <math.h>
 #include <chrono>
+#include <memory>
 #include <vector>
 
 struct statistics
@@ -15,7 +16,6 @@ struct data
   double mean;
   double sigma;
 };
-
 
 struct position
 {
@@ -98,13 +98,9 @@ velocity random_velocity_generator();
 
 std::vector<boid> boids_generator(int);
 
-double d_m(std::vector<boid>, const int);
-
-double v_m(std::vector<boid>, const int);
-
-std::vector<boid> update_boids(std::chrono::_V2::steady_clock::time_point::rep,
-                               std::vector<boid>&, double const, double const,
+std::vector<boid> update_boids(std::vector<boid>&, double const, double const,
                                double const, double const, int const);
+
 data position_data_analysis(std::vector<boid> const&, int const);
 
 data velocity_data_analysis(std::vector<boid> const&, int const);
