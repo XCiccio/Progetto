@@ -1,9 +1,5 @@
-#include "flockof.hpp"
-#include <SFML/Graphics.hpp>
-#include <SFML/Window.hpp>
-#include <chrono>
+#include "sfml_flockof.hpp"
 #include <iostream>
-#include <thread>
 
 int main()
 
@@ -11,7 +7,6 @@ int main()
   std::cout << "How many boids do you want to generate? \n";
   int N;
   std::cin >> N;
-  std::vector v = boids_generator(N);
   std::cout << "Insert the parameter s for separation \n";
   double s;
   std::cin >> s;
@@ -24,44 +19,19 @@ int main()
   std::cout << "Insert the parameter c for cohesion \n";
   double c;
   std::cin >> c;
-  std::cout << "How many seconds do you want the program to last? \n";
-  int desired_duration_seconds;
-  std::cin >> desired_duration_seconds;
-  sf::RenderWindow window(sf::VideoMode(800, 600), "My window");
-  sf::RectangleShape boid;
-
-  boid.setSize(sf::Vector2f(5, 5));
-  auto start = std::chrono::steady_clock::now();
-  // std::vector<boid> v_updated;
+  sf::RenderWindow window(sf::VideoMode(800, 800), "FLOCK OF BOIDS");
+  std::vector v = boids_generator(N);
+  auto shapes   = create_shapes(v);
+  constexpr int frame_rate{60};
+  window.setFramerateLimit(frame_rate);
   while (window.isOpen()) {
-    // sf::Event event;
-    // while (window.pollEvent(event))
-    for (;;) {
-      auto now = std::chrono::steady_clock::now();
-      auto duration =
-          std::chrono::duration_cast<std::chrono::seconds>(now - start).count();
-      if (duration >= desired_duration_seconds) {
-        break;
+    sf::Event event;
+    while (window.pollEvent(event)) {
+      if (event.type == sf::Event::Closed) {
+        window.close();
       }
-      auto time_lasted = std::chrono::duration_cast<std::chrono::nanoseconds>(
-                             std::chrono::steady_clock::now() - now)
-                             .count();
-      v = update_boids(time_lasted, v, s, ds, a, c, N);
-      std::cout << "\rDistanza media intermedia dal cm "
-                << position_data_analysis(v, N).mean << '\n';
-
-      for ( auto it= v.begin(), last=v.end(); it!=last; it++){
-        
-      }
-      std::cout << v[0].pb.x << '\n';
-      sf::Vector2f boidposition(v[0].pb.x, v[0].pb.y);
-      boid.setPosition(boidposition);
-      window.clear();
-      window.draw(boid);
-      window.display();
     }
-
-    window.close();
+    v = update_boids(v, s, ds, a, c, N);
+    update_window(window, shapes, v);
   }
-  // std::this_thread::sleep_for(std::chrono::milliseconds(500));
 }
