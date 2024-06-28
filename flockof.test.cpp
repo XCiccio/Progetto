@@ -5,10 +5,10 @@
 
 TEST_CASE("Testing distance 1")
 {
-  const position position1{2.0, 0.0};
-  const position position2{0.0, -2.0};
+  const position position1{1.0, 2.0};
+  const position position2{2.0, 3.0};
   const double distance_ = distance(position1, position2);
-  CHECK(distance_ == doctest::Approx(2.82842712));
+  CHECK(distance_ == doctest::Approx(1.41421));
 }
 
 TEST_CASE("Testing distance 2")
@@ -26,25 +26,6 @@ TEST_CASE("Testing distance 3")
   const double distance_ = distance(position1, position2);
   CHECK(distance_ == doctest::Approx(1.0));
 }
-/*
-TEST_CASE("Testing vector distance 1")
-{
-  const position position1{0.0, 0.0};
-  const position position2{0.0, 0.0};
-  const position vectordistance_ = vector_distance(position1, position2);
-  CHECK(vectordistance_.x == doctest::Approx(0.0));
-  CHECK(vectordistance_.y == doctest::Approx(0.0));
-}
-
-TEST_CASE("Testing vector distance 2")
-{
-  const position position1{1.0, 2.0};
-  const position position2{-5.0, 3.0};
-  const position vectordistance_ = vector_distance(position1, position2);
-  CHECK(vectordistance_.x == doctest::Approx(6.0));
-  CHECK(vectordistance_.y == doctest::Approx(-1.0));
-}
-*/
 
 TEST_CASE("Testing sum of velocity 1")
 {
@@ -198,7 +179,7 @@ TEST_CASE("Testing separation 4")
   const velocity v3 = separation(s, ds, b, vec);
   CHECK(v3.v_x == doctest::Approx(1.0));
   CHECK(v3.v_y == doctest::Approx(1.0));
-} 
+}
 
 TEST_CASE("Testing separation 5")
 {
@@ -211,4 +192,68 @@ TEST_CASE("Testing separation 5")
   const velocity v3 = separation(s, ds, b, vec);
   CHECK(v3.v_x == doctest::Approx(0.0));
   CHECK(v3.v_y == doctest::Approx(-1.0));
-} 
+}
+
+TEST_CASE("Testing the wall_repulsion function 1")
+{
+  boid b{{(520.), (100.)}, {(20.), (20.)}};
+  const velocity v = wall_repulsion(b);
+  CHECK(v.v_x == doctest::Approx(-20.));
+  CHECK(v.v_y == doctest::Approx(20.));
+}
+
+TEST_CASE("Testing the wall_repulsion function 2")
+{
+  boid b{{(1.), (100.)}, {(-20.), (20.)}};
+  const velocity v = wall_repulsion(b);
+  CHECK(v.v_x == doctest::Approx(20.));
+  CHECK(v.v_y == doctest::Approx(20.));
+}
+
+TEST_CASE("Testing the wall_repulsion function 3")
+{
+  boid b{{(100.), (510.)}, {(-20.), (20.)}};
+  const velocity v = wall_repulsion(b);
+  CHECK(v.v_x == doctest::Approx(-20.));
+  CHECK(v.v_y == doctest::Approx(-20.));
+}
+
+TEST_CASE("Testing the wall_repulsion function 4")
+{
+  boid b{{(510.), (510.)}, {(20.), (20.)}};
+  const velocity v = wall_repulsion(b);
+  CHECK(v.v_x == doctest::Approx(-20.));
+  CHECK(v.v_y == doctest::Approx(-20.));
+}
+
+TEST_CASE("Testing the wall_repulsion function 5")
+{
+  boid b{{(100.), (500.)}, {(-20.), (20.)}};
+  const velocity v = wall_repulsion(b);
+  CHECK(v.v_x == doctest::Approx(-20.));
+  CHECK(v.v_y == doctest::Approx(20.));
+}
+
+TEST_CASE("Testing the wall_repulsion function 6")
+{
+  boid b{{(500.), (500.)}, {(20.), (20.)}};
+  const velocity v = wall_repulsion(b);
+  CHECK(v.v_x == doctest::Approx(20.));
+  CHECK(v.v_y == doctest::Approx(20.));
+}
+
+TEST_CASE("Testing the wall_repulsion function 7")
+{
+  boid b{{(100.), (510.)}, {(-20.), (20.)}};
+  const velocity v = wall_repulsion(b);
+  CHECK(v.v_x == doctest::Approx(-20.));
+  CHECK(v.v_y == doctest::Approx(-20.));
+}
+
+TEST_CASE("Testing the wall_repulsion function 8")
+{
+  boid b{{(5.), (5.)}, {(-20.), (-20.)}};
+  const velocity v = wall_repulsion(b);
+  CHECK(v.v_x == doctest::Approx(20.));
+  CHECK(v.v_y == doctest::Approx(20.));
+}
