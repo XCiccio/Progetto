@@ -105,4 +105,6 @@ data position_data_analysis(std::vector<boid> const&, int const);
 
 data velocity_data_analysis(std::vector<boid> const&, int const);
 
+velocity wall_repulsion(boid&);
+
 #endif
