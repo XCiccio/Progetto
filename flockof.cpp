@@ -99,7 +99,7 @@ position random_position_generator()
       std::chrono::system_clock::now().time_since_epoch().count());
   std::default_random_engine generator(seed);
   std::generate_n(std::back_inserter(v), N, [&] {
-    std::uniform_real_distribution<double> dist(0, 800);
+    std::uniform_real_distribution<double> dist(15, 785);
     return dist(generator);
   });
   return {v[0], v[1]};
@@ -114,7 +114,7 @@ velocity random_velocity_generator()
       std::chrono::system_clock::now().time_since_epoch().count());
   std::default_random_engine generator(seed);
   std::generate_n(std::back_inserter(v), N, [&] {
-    std::uniform_real_distribution<double> dist(-80, 80);
+    std::uniform_real_distribution<double> dist(-20, 20);
     return dist(generator);
   });
   return {v[0], v[1]};
@@ -131,31 +131,56 @@ std::vector<boid> boids_generator(int const N)
   return v;
 }
 
+velocity wall_repulsion(boid& boid)
+{
+  auto boid1 = boid;
+  if ((boid.pb.x > 790 && boid.vb.v_x > 0 && boid.pb.y > 790 && boid.vb.v_y > 0)
+      || (boid.pb.x < 10 && boid.vb.v_x < 0 && boid.pb.y < 10
+          && boid.vb.v_y < 0)
+      || (boid.pb.x > 790 && boid.vb.v_x > 0 && boid.pb.y < 10
+          && boid.vb.v_y < 0)
+      || (boid.pb.x < 10 && boid.vb.v_x < 0 && boid.pb.y > 790
+          && boid.vb.v_y > 0)) {
+    boid1.vb = {-1 * boid.vb.v_x, -1 * boid.vb.v_y};
+  } else if ((boid.pb.x > 790 && boid.vb.v_x > 0)
+             || (boid.pb.x < 10 && boid.vb.v_x < 0)) {
+    boid1.vb = {-1 * boid.vb.v_x, boid.vb.v_y};
+  } else if ((boid.pb.y > 790 && boid.vb.v_y > 0)
+             || (boid.pb.y < 10 && boid.vb.v_y < 0)) {
+    boid1.vb = {boid.vb.v_x, -1 * boid.vb.v_y};
+  }
+  return boid1.vb;
+}
+
+/*velocity repulsion(boid const& b)
+{
+  boid b1   = b;
+  double vx = (1000. / (b1.pb.x - 10.)) - (1000. / (500. - b1.pb.x));
+  double vy = (1000. / (b1.pb.y - 10.)) - (1000. / (500. - b1.pb.y));
+  return {vx, vy};
+}*/
+
 std::vector<boid> update_boids(std::vector<boid>& v, double s, double ds,
                                double a, double c, int N)
 {
   for (auto& boid : v) {
-    if (boid.pb.x > 800 || boid.pb.x < 0 || boid.pb.y > 800 || boid.pb.y < 0) {
-      auto boid1 = boid;
-      if (boid.pb.x > 800 || boid.pb.x < 0) {
-        boid1.vb.v_x = -1 * boid.vb.v_x;
-      } else {
-        boid1.vb.v_y = -1 * boid.vb.v_y;
-      }
-      auto position_velocity = 0.01666666666666666666666666666667 * boid1.vb;
+    auto boid1 = boid;
+    if (boid.pb.x > 790 || boid.pb.x < 10 || boid.pb.y > 790
+        || boid.pb.y < 10) {
+      boid1.vb               = wall_repulsion(boid);
+      auto position_velocity = (1. / 60.) * boid1.vb;
       position new_position{position_velocity.v_x, position_velocity.v_y};
-      boid1.pb = boid.pb + new_position;
-      boid     = boid1;
+      boid1.pb += new_position;
+      boid = boid1;
     } else {
-      auto boid1 = boid;
-      boid1.vb   = ((boid.vb + separation(s, ds, boid, v))
-                  + (alignment(a, boid, v, N) + cohesion(c, cm(v, N), boid)));
+      boid1.vb = boid.vb + separation(s, ds, boid, v) + alignment(a, boid, v, N)
+               + cohesion(c, cm(v, N), boid);
 
-      if (boid1.vb.module() >= 100.) {
+      if (boid1.vb.module() >= 50.) {
         boid1.vb = boid.vb;
       }
 
-      auto position_velocity = 0.01666666666666666666666666666667 * boid1.vb;
+      auto position_velocity = (1. / 60.) * boid1.vb;
       position new_position{position_velocity.v_x, position_velocity.v_y};
       boid1.pb = boid.pb + new_position;
       boid     = boid1;
@@ -192,4 +217,3 @@ data velocity_data_analysis(std::vector<boid> const& v, int const N)
   auto sigma(std::sqrt(sum / (N - 1)));
   return {mean, sigma};
 }
-
