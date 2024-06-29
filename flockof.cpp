@@ -21,7 +21,7 @@ position operator/(position const& a, int N)
   return {(a.x) / N, (a.y) / N};
 }
 
-position operator*(double p, position const& a)
+position operator*(position const& a, double p)
 {
   return {(a.x) * p, (a.y) * p};
 }
@@ -63,7 +63,7 @@ position cm(std::vector<boid> const& boids, int const N)
 
 velocity cohesion(double const c, position const& CM, boid const& b)
 {
-  auto cohesion = c * (CM - b.pb);
+  auto cohesion = (CM - b.pb) * c;
   return {cohesion.x, cohesion.y};
 }
 
@@ -87,7 +87,7 @@ velocity separation(double const s, double const ds, boid const& b,
         return distance(b.pb, b_puff.pb) < ds ? res + (b_puff.pb - b.pb)
                                               : res + null_sum;
       });
-  return {(-s) * result.x, (-s) * result.y};
+  return {result.x * (-s), result.y * (-s)};
 }
 
 position random_position_generator()
@@ -152,38 +152,28 @@ velocity wall_repulsion(boid& boid)
   return boid1.vb;
 }
 
-/*velocity repulsion(boid const& b)
-{
-  boid b1   = b;
-  double vx = (1000. / (b1.pb.x - 10.)) - (1000. / (500. - b1.pb.x));
-  double vy = (1000. / (b1.pb.y - 10.)) - (1000. / (500. - b1.pb.y));
-  return {vx, vy};
-}*/
-
 std::vector<boid> update_boids(std::vector<boid>& v, double s, double ds,
                                double a, double c, int N)
 {
   for (auto& boid : v) {
-    auto boid1 = boid;
     if (boid.pb.x > 790 || boid.pb.x < 10 || boid.pb.y > 790
         || boid.pb.y < 10) {
-      boid1.vb               = wall_repulsion(boid);
-      auto position_velocity = (1. / 60.) * boid1.vb;
+      boid.vb                = wall_repulsion(boid);
+      auto position_velocity = (1. / 60.) * boid.vb;
       position new_position{position_velocity.v_x, position_velocity.v_y};
-      boid1.pb += new_position;
-      boid = boid1;
+      boid.pb += new_position;
     } else {
-      boid1.vb = boid.vb + separation(s, ds, boid, v) + alignment(a, boid, v, N)
+      auto boid1 = boid;
+      boid.vb += separation(s, ds, boid, v) + alignment(a, boid, v, N)
                + cohesion(c, cm(v, N), boid);
 
-      if (boid1.vb.module() >= 50.) {
-        boid1.vb = boid.vb;
+      if (boid.vb.module() >= 50.) {
+        boid.vb = boid1.vb;
       }
 
-      auto position_velocity = (1. / 60.) * boid1.vb;
+      auto position_velocity = (1. / 60.) * boid.vb;
       position new_position{position_velocity.v_x, position_velocity.v_y};
-      boid1.pb = boid.pb + new_position;
-      boid     = boid1;
+      boid.pb += new_position;
     }
   }
   return v;
