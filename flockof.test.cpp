@@ -257,3 +257,29 @@ TEST_CASE("Testing the wall_repulsion function 8")
   CHECK(v.v_x == doctest::Approx(20.));
   CHECK(v.v_y == doctest::Approx(20.));
 }
+
+TEST_CASE("Testing update_boids 1")
+{
+  const int N     = 3;
+  const double s  = 0.2;
+  const double ds = 15;
+  const double a  = 0.2;
+  const double c  = 0.2;
+  std::vector<boid> vec{{{50., 100.}, {10., 10.}},
+                        {{250., 20.}, {15., 5.}},
+                        {{400., 300.}, {5., 8.}}};
+  std::vector<boid> vec1 = update_boids(vec, s, ds, a, c, N);
+  CHECK(vec[0].pb.x == doctest::Approx(50.16666667));
+  CHECK(vec[0].pb.y == doctest::Approx(100.1666667));
+  CHECK(vec[0].vb.v_x == doctest::Approx(10.));
+  CHECK(vec[0].vb.v_y == doctest::Approx(10.));
+  CHECK(vec[1].pb.x == doctest::Approx(250.25));
+  CHECK(vec[1].pb.y == doctest::Approx(20.0833));
+  CHECK(vec[1].vb.v_x == doctest::Approx(15.));
+  CHECK(vec[1].vb.v_y == doctest::Approx(5.));
+  CHECK(vec[2].pb.x == doctest::Approx(399.94));
+  CHECK(vec[2].pb.y == doctest::Approx(299.83));
+  CHECK(vec[2].vb.v_x == doctest::Approx(-3.5));
+  CHECK(vec[2].vb.v_y == doctest::Approx(-10.1));
+}
+
