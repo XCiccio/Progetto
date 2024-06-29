@@ -155,6 +155,7 @@ velocity wall_repulsion(boid& boid)
 std::vector<boid> update_boids(std::vector<boid>& v, double s, double ds,
                                double a, double c, int N)
 {
+  std::vector<boid> v1 = v;
   for (auto& boid : v) {
     if (boid.pb.x > 790 || boid.pb.x < 10 || boid.pb.y > 790
         || boid.pb.y < 10) {
@@ -164,8 +165,8 @@ std::vector<boid> update_boids(std::vector<boid>& v, double s, double ds,
       boid.pb += new_position;
     } else {
       auto boid1 = boid;
-      boid.vb += separation(s, ds, boid, v) + alignment(a, boid, v, N)
-               + cohesion(c, cm(v, N), boid);
+      boid.vb += separation(s, ds, boid, v1) + alignment(a, boid, v1, N)
+               + cohesion(c, cm(v1, N), boid);
 
       if (boid.vb.module() >= 50.) {
         boid.vb = boid1.vb;
@@ -207,3 +208,5 @@ data velocity_data_analysis(std::vector<boid> const& v, int const N)
   auto sigma(std::sqrt(sum / (N - 1)));
   return {mean, sigma};
 }
+
+    
