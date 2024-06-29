@@ -3,6 +3,177 @@
 #include "flockof.hpp"
 #include "doctest.h"
 
+TEST_CASE("Testing sum p 1")
+{
+  const position position1{1.0, 2.0};
+  const position position2{2.0, 3.0};
+  const position sum = position1 + position2;
+  CHECK(sum.x == doctest::Approx(3.0));
+  CHECK(sum.y == doctest::Approx(5.0));
+}
+
+TEST_CASE("Testing sum p 2")
+{
+  const position position1{50.55, 20.30};
+  const position position2{2.22, 3.44};
+  const position sum = position1 + position2;
+  CHECK(sum.x == doctest::Approx(52.77));
+  CHECK(sum.y == doctest::Approx(23.74));
+}
+
+TEST_CASE("Testing sum p 3")
+{
+  const position position1{0.0, 0.0};
+  const position position2{0.0, 0.0};
+  const position sum = position1 + position2;
+  CHECK(sum.x == doctest::Approx(0.0));
+  CHECK(sum.y == doctest::Approx(0.0));
+}
+
+TEST_CASE("Testing dofference p 1")
+{
+  const position position1{0.0, 0.0};
+  const position position2{20.0, 30.22};
+  const position difference = position1 - position2;
+  CHECK(difference.x == doctest::Approx(-20.0));
+  CHECK(difference.y == doctest::Approx(-30.22));
+}
+
+TEST_CASE("Testing difference p 2")
+{
+  const position position1{50.0, 80.0};
+  const position position2{20.0, 100.0};
+  const position difference = position1 - position2;
+  CHECK(difference.x == doctest::Approx(30.0));
+  CHECK(difference.y == doctest::Approx(-20.0));
+}
+
+TEST_CASE("Testing / 1")
+{
+  const position position1{50.0, 30.20};
+  const int n = 5;
+  const position resoult = position1 / n;
+  CHECK(resoult.x == doctest::Approx(10.0));
+  CHECK(resoult.y == doctest::Approx(6.04));
+}
+
+TEST_CASE("Testing / 2")
+{
+  const position position1{20.10, 30.20};
+  const int n = 1;
+  const position resoult = position1 / n;
+  CHECK(resoult.x == doctest::Approx(20.10));
+  CHECK(resoult.y == doctest::Approx(30.20));
+}
+
+TEST_CASE("Testing / 3")
+{
+  const position position1{0.0, 0.0};
+  const int n = 100;
+  const position resoult = position1 / n;
+  CHECK(resoult.x == doctest::Approx(0.0));
+  CHECK(resoult.y == doctest::Approx(0.0));
+}
+/*
+TEST_CASE("Testing * p 1")
+{
+  const position position1{50.0, 30.20};
+  double d = 5.0;
+  const position resoult = position1 * d;
+  CHECK(resoult.x == doctest::Approx(250.0));
+  CHECK(resoult.y == doctest::Approx(151.0));
+}*/
+
+TEST_CASE("Testing sum v 1")
+{
+  const velocity velocity1{1.0, 2.0};
+  const velocity velocity2{2.0, 3.0};
+  const velocity sum = velocity1 + velocity2;
+  CHECK(sum.v_x == doctest::Approx(3.0));
+  CHECK(sum.v_y == doctest::Approx(5.0));
+}
+
+TEST_CASE("Testing sum v 2")
+{
+  const velocity velocity1{20.0, 2.0};
+  const velocity velocity2{-10.5, -3.0};
+  const velocity sum = velocity1 + velocity2;
+  CHECK(sum.v_x == doctest::Approx(9.5));
+  CHECK(sum.v_y == doctest::Approx(-1.0));
+}
+
+TEST_CASE("Testing difference v 1")
+{
+  const velocity velocity1{20.0, 2.0};
+  const velocity velocity2{-10.5, -3.0};
+  const velocity difference = velocity1 - velocity2;
+  CHECK(difference.v_x == doctest::Approx(30.5));
+  CHECK(difference.v_y == doctest::Approx(5.0));
+}
+
+TEST_CASE("Testing difference v 2")
+{
+  const velocity velocity1{50.0, -32.10};
+  const velocity velocity2{110.5, -3.15};
+  const velocity difference = velocity1 - velocity2;
+  CHECK(difference.v_x == doctest::Approx(-60.5));
+  CHECK(difference.v_y == doctest::Approx(-28.95));
+}
+
+TEST_CASE("Testing difference v 3")
+{
+  const velocity velocity1{0.0, 0.0};
+  const velocity velocity2{0.0, -3.0};
+  const velocity difference = velocity1 - velocity2;
+  CHECK(difference.v_x == doctest::Approx(0.0));
+  CHECK(difference.v_y == doctest::Approx(3.0));
+}
+
+TEST_CASE("Testing * v 1")
+{
+  const velocity velocity1{50.0, 30.20};
+  double d = 5.0;
+  const velocity resoult = d * velocity1;
+  CHECK(resoult.v_x == doctest::Approx(250.0));
+  CHECK(resoult.v_y == doctest::Approx(151.0));
+}
+
+TEST_CASE("Testing * v 2")
+{
+  const velocity velocity1{10.0, -40.50};
+  double d = -2.0;
+  const velocity resoult = d * velocity1;
+  CHECK(resoult.v_x == doctest::Approx(-20.0));
+  CHECK(resoult.v_y == doctest::Approx(81.0));
+}
+
+TEST_CASE("Testing * v 3")
+{
+  const velocity velocity1{0.0, 0.0};
+  double d = -2.0;
+  const velocity resoult = d * velocity1;
+  CHECK(resoult.v_x == doctest::Approx(0.0));
+  CHECK(resoult.v_y == doctest::Approx(0.0));
+}
+
+TEST_CASE("Testing * v 4")
+{
+  const velocity velocity1{10.0, -40.50};
+  double d = 0.0;
+  const velocity resoult = d * velocity1;
+  CHECK(resoult.v_x == doctest::Approx(0.0));
+  CHECK(resoult.v_y == doctest::Approx(0.0));
+}
+
+TEST_CASE("Testing * v 5")
+{
+  const velocity velocity1{0.0, 0.0};
+  double d = 0.0;
+  const velocity resoult = d * velocity1;
+  CHECK(resoult.v_x == doctest::Approx(0.0));
+  CHECK(resoult.v_y == doctest::Approx(0.0));
+}
+
 TEST_CASE("Testing distance 1")
 {
   const position position1{1.0, 2.0};
