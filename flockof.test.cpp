@@ -283,3 +283,90 @@ TEST_CASE("Testing update_boids 1")
   CHECK(vec[2].vb.v_y == doctest::Approx(-10.1));
 }
 
+TEST_CASE("Testing update_boids 2")
+{
+  const int N     = 3;
+  const double s  = 0.5;
+  const double ds = 15;
+  const double a  = 0.1;
+  const double c  = 0.3;
+  std::vector<boid> vec{{{50., 100.}, {10., 10.}},
+                        {{55., 105.}, {-12., 11.}},
+                        {{45., 95.}, {7., -8.}}};
+  std::vector<boid> vec1 = update_boids(vec, s, ds, a, c, N);
+  CHECK(vec[0].pb.x == doctest::Approx(50.270833));
+  CHECK(vec[0].pb.y == doctest::Approx(100.4025));
+  CHECK(vec[0].vb.v_x == doctest::Approx(16.25));
+  CHECK(vec[0].vb.v_y == doctest::Approx(24.15));
+  CHECK(vec[1].pb.x == doctest::Approx(55.05916));
+  CHECK(vec[1].pb.y == doctest::Approx(105.516));
+  CHECK(vec[1].vb.v_x == doctest::Approx(3.55));
+  CHECK(vec[1].vb.v_y == doctest::Approx(31));
+  CHECK(vec[2].pb.x == doctest::Approx(45.1283));
+  CHECK(vec[2].pb.y == doctest::Approx(95.0475));
+  CHECK(vec[2].vb.v_x == doctest::Approx(7.7));
+  CHECK(vec[2].vb.v_y == doctest::Approx(2.85));
+}
+
+TEST_CASE("Testing update boids")
+{
+  const int N     = 3;
+  const double s  = 0.5;
+  const double ds = 15;
+  const double a  = 0.1;
+  const double c  = 0.3;
+  std::vector<boid> vec{{{50., 100.}, {10., 10.}},
+                        {{55., 105.}, {-12., 11.}},
+                        {{45., 95.}, {7., -8.}}};
+  velocity cohesion1   = cohesion(c, cm(vec, N), vec[0]);
+  velocity alignment1  = alignment(a, vec[0], vec, N);
+  velocity separation1 = separation(s, ds, vec[0], vec);
+  CHECK(cohesion1.v_x == doctest::Approx(7.5));
+  CHECK(cohesion1.v_y == doctest::Approx(15.));
+  CHECK(alignment1.v_x == doctest::Approx(-1.25));
+  CHECK(alignment1.v_y == doctest::Approx(-0.85));
+  CHECK(separation1.v_x == doctest::Approx(0.));
+  CHECK(separation1.v_y == doctest::Approx(0.));
+  velocity cohesion2   = cohesion(c, cm(vec, N), vec[1]);
+  velocity alignment2  = alignment(a, vec[1], vec, N);
+  velocity separation2 = separation(s, ds, vec[1], vec);
+  CHECK(cohesion2.v_x == doctest::Approx(6.));
+  CHECK(cohesion2.v_y == doctest::Approx(13.5));
+  CHECK(alignment2.v_x == doctest::Approx(2.05));
+  CHECK(alignment2.v_y == doctest::Approx(-1));
+  CHECK(separation2.v_x == doctest::Approx(7.5));
+  CHECK(separation2.v_y == doctest::Approx(7.5));
+  velocity cohesion3   = cohesion(c, cm(vec, N), vec[2]);
+  velocity alignment3  = alignment(a, vec[2], vec, N);
+  velocity separation3 = separation(s, ds, vec[2], vec);
+  CHECK(cohesion3.v_x == doctest::Approx(9.));
+  CHECK(cohesion3.v_y == doctest::Approx(16.5));
+  CHECK(alignment3.v_x == doctest::Approx(-0.8));
+  CHECK(alignment3.v_y == doctest::Approx(1.85));
+  CHECK(separation3.v_x == doctest::Approx(-7.5));
+  CHECK(separation3.v_y == doctest::Approx(-7.5));
+  velocity sum1 = vec[0].vb + cohesion1 + alignment1 + separation1;
+  velocity sum2 = vec[1].vb + cohesion2 + alignment2 + separation2;
+  velocity sum3 = vec[2].vb + cohesion3 + alignment3 + separation3;
+  CHECK(sum1.v_x == doctest::Approx(16.25));
+  CHECK(sum1.v_y == doctest::Approx(24.15));
+  CHECK(sum2.v_x == doctest::Approx(3.55));
+  CHECK(sum2.v_y == doctest::Approx(31));
+  CHECK(sum3.v_x == doctest::Approx(7.7));
+  CHECK(sum3.v_y == doctest::Approx(2.85));
+  velocity p1 = ((1.) / (60.)) * sum1;
+  position sump1{p1.v_x, p1.v_y};
+  velocity p2 = ((1.) / (60.)) * sum2;
+  position sump2{p2.v_x, p2.v_y};
+  velocity p3 = ((1.) / (60.)) * sum3;
+  position sump3{p3.v_x, p3.v_y};
+  position def_sum1 = vec[0].pb + sump1;
+  position def_sum2 = vec[1].pb + sump2;
+  position def_sum3 = vec[2].pb + sump3;
+  CHECK(def_sum1.x == doctest::Approx(50.270833));
+  CHECK(def_sum1.y == doctest::Approx(100.4025));
+  CHECK(def_sum2.x == doctest::Approx(55.05916));
+  CHECK(def_sum2.y == doctest::Approx(105.516));
+  CHECK(def_sum3.x == doctest::Approx(45.1283));
+  CHECK(def_sum3.y == doctest::Approx(95.0475));
+}
