@@ -222,8 +222,8 @@ TEST_CASE("Testing sum of velocity 2")
                               {{2.0, 3.0}, {1.0, 4.0}}};
   const int N{2};
   const position cmcheck = cm(vec, N);
-  CHECK(cmcheck.x == doctest::Approx(4.0));
-  CHECK(cmcheck.y == doctest::Approx(6.0));
+  CHECK(cmcheck.x == doctest::Approx(2.0));
+  CHECK(cmcheck.y == doctest::Approx(3.0));
 }
 
 TEST_CASE("Testing the cm 2")
@@ -452,7 +452,7 @@ TEST_CASE("Testing update_boids 1")
   const double min_position{10.};
   const double max_position{790.};
   const double max_velocity{50.};
-  const double frame_rate_limit{1./60.};
+  const double frame_rate_limit{1. / 60.};
   const int N     = 3;
   const double s  = 0.2;
   const double ds = 15;
@@ -461,7 +461,9 @@ TEST_CASE("Testing update_boids 1")
   std::vector<boid> vec{{{50., 100.}, {10., 10.}},
                         {{250., 20.}, {15., 5.}},
                         {{400., 300.}, {5., 8.}}};
-  std::vector<boid> vec1 = update_boids(vec, s, ds, a, c, N, min_position, max_position, max_velocity, frame_rate_limit);
+  std::vector<boid> vec1 =
+      update_boids(vec, s, ds, a, c, N, min_position, max_position,
+                   max_velocity, frame_rate_limit);
   CHECK(vec[0].pb.x == doctest::Approx(50.16666667));
   CHECK(vec[0].pb.y == doctest::Approx(100.1666667));
   CHECK(vec[0].vb.v_x == doctest::Approx(10.));
@@ -481,7 +483,7 @@ TEST_CASE("Testing update_boids 2")
   const double min_position{10.};
   const double max_position{790.};
   const double max_velocity{50.};
-  const double frame_rate_limit{1./60.};
+  const double frame_rate_limit{1. / 60.};
   const int N     = 3;
   const double s  = 0.5;
   const double ds = 15;
@@ -490,7 +492,9 @@ TEST_CASE("Testing update_boids 2")
   std::vector<boid> vec{{{50., 100.}, {10., 10.}},
                         {{55., 105.}, {-12., 11.}},
                         {{45., 95.}, {7., -8.}}};
-  std::vector<boid> vec1 = update_boids(vec, s, ds, a, c, N, min_position, max_position, max_velocity, frame_rate_limit);
+  std::vector<boid> vec1 =
+      update_boids(vec, s, ds, a, c, N, min_position, max_position,
+                   max_velocity, frame_rate_limit);
   CHECK(vec[0].pb.x == doctest::Approx(50.270833));
   CHECK(vec[0].pb.y == doctest::Approx(100.4025));
   CHECK(vec[0].vb.v_x == doctest::Approx(16.25));
@@ -567,3 +571,36 @@ TEST_CASE("Testing update_boids 2")
   CHECK(def_sum3.x == doctest::Approx(45.1283));
   CHECK(def_sum3.y == doctest::Approx(95.0475));
 }*/
+
+TEST_CASE("Testing data analysis 1")
+{
+  const int N = 4;
+  std::vector<boid> v{{{3., 2.}, {5., 2.}},
+                      {{11., 2.}, {-3., 4.}},
+                      {{3., 8.}, {4., -8.}},
+                      {{11., 8.}, {-7., -1.}}};
+  data statistiche_posizione = position_data_analysis(v, N);
+  const position cmcheck     = cm(v, N);
+  data statistiche_velocita  = velocity_data_analysis(v, N);
+  CHECK(cmcheck.x == doctest::Approx(7.0));
+  CHECK(cmcheck.y == doctest::Approx(5.0));
+  CHECK(statistiche_posizione.mean == doctest::Approx(5.0));
+  CHECK(statistiche_posizione.sigma == doctest::Approx(0.0));
+  CHECK(statistiche_velocita.mean == doctest::Approx(6.600126));
+  CHECK(statistiche_velocita.sigma == doctest::Approx(1.803084));
+}
+
+TEST_CASE("Testing data analysis 2 ")
+{
+  const int N = 3;
+  std::vector<boid> v{{{2., 2.}, {5., 2.}},
+                      {{9., 4.}, {-3., 4.}},
+                      {{5., 7.}, {4., -8.}},
+                      };
+  data statistiche_posizione = position_data_analysis(v, N);
+  const position cmcheck     = cm(v, N);
+  CHECK(cmcheck.x == doctest::Approx(5.333333));
+  CHECK(cmcheck.y == doctest::Approx(4.333333));
+  CHECK(statistiche_posizione.mean == doctest::Approx(3.479352));
+  CHECK(statistiche_posizione.sigma == doctest::Approx(0.712617));
+}
