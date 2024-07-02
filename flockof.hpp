@@ -82,9 +82,9 @@ double distance(position const&, position const&);
 
 velocity sum_of_velocity(velocity const&, velocity const&);
 
-/*position cm(std::vector<boid> const&, int);
+position cm(std::vector<boid> const&, int);
 
-velocity cohesion(int const N, double const, position const&, boid const&);*/
+velocity cohesion(int const N, double const, position const&, boid const&);
 
 velocity cohesion(std::vector<boid> const&, int const, double const, boid const&);
 
@@ -105,10 +105,9 @@ velocity wall_repulsion(boid, const double, const double);
 std::vector<boid> update_boids(std::vector<boid> &, double const, double const,
                                double const, double const, int const, const double, const double, const double, const double);
 
-/*data position_data_analysis(std::vector<boid> const&, int const);
+data position_data_analysis(std::vector<boid> const&, int const);
 
-data velocity_data_analysis(std::vector<boid> const&, int const);*/
-
+data velocity_data_analysis(std::vector<boid> const&, int const);
 
 
 #endif
