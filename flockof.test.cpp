@@ -256,6 +256,40 @@ TEST_CASE("Testing the cohesion 2")
   CHECK(v1.v_y == doctest::Approx(0.0));
 }
 */
+TEST_CASE("Testing new cohesion 1"){
+  const std::vector<boid> vec{{{50., 100.}, {10., 10.}},
+                        {{55., 105.}, {-12., 11.}},
+                        {{45., 95.}, {7., -8.}}};
+  int const N = 3;
+  double const c = 0.3;
+  auto cohesion1 = cohesion(vec, N, c, vec[0]);
+  auto cohesion2 = cohesion(vec, N, c, vec[1]);
+  auto cohesion3 = cohesion(vec, N, c, vec[2]);
+  CHECK(cohesion1.v_x == doctest::Approx(0));
+  CHECK(cohesion1.v_y == doctest::Approx(0));
+  CHECK(cohesion2.v_x == doctest::Approx(-2.25));
+  CHECK(cohesion2.v_y == doctest::Approx(-2.25));
+  CHECK(cohesion3.v_x == doctest::Approx(2.25));
+  CHECK(cohesion3.v_y == doctest::Approx(2.25));
+}
+
+TEST_CASE("Testing new cohesion 2"){
+  const std::vector<boid> vec{{{788, 302.}, {10., 10.}},
+                        {{19., 654.}, {-12., 11.}},
+                        {{406., 120.}, {7., -8.}}};
+  int const N = 3;
+  double const c = 0.1;
+  auto cohesion1 = cohesion(vec, N, c, vec[0]);
+  auto cohesion2 = cohesion(vec, N, c, vec[1]);
+  auto cohesion3 = cohesion(vec, N, c, vec[2]);
+  CHECK(cohesion1.v_x == doctest::Approx(-57.55));
+  CHECK(cohesion1.v_y == doctest::Approx(8.5));
+  CHECK(cohesion2.v_x == doctest::Approx(57.8));
+  CHECK(cohesion2.v_y == doctest::Approx(-44.3));
+  CHECK(cohesion3.v_x == doctest::Approx(-0.25));
+  CHECK(cohesion3.v_y == doctest::Approx(35.8));
+}
+
 TEST_CASE("Testing alignment 1")
 {
   const boid b{{(5.0), (2.0)}, {(1.0), (4.0)}};
