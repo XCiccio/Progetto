@@ -52,15 +52,15 @@ velocity sum_of_velocity(velocity const& a, velocity const& b)
   return a + b;
 }
 
-/*position cm(std::vector<boid> const& boids, int const N)
+position cm(std::vector<boid> const& boids, int const N)
 {
   position init{0.0, 0.0};
   position cm =
       std::accumulate(boids.begin(), boids.end(), init,
                       [](position res, boid a) { return res + a.pb; });
-  return (cm) / (N - 1);
+  return (cm) / (N);
 }
-
+/*
 velocity cohesion(int const N, double const c, position const& CM, boid const& b)
 {
   auto cohesion = ((CM - (b.pb)/(N-1))-b.pb) * c;
@@ -187,7 +187,7 @@ std::vector<boid> update_boids(std::vector<boid>& v, double s, double ds,
   return v;
 }
 
-/*data position_data_analysis(std::vector<boid> const& v, int const N)
+data position_data_analysis(std::vector<boid> const& v, int const N)
 {
   auto mean = (std::accumulate(v.begin(), v.end(), 0.,
                                [&v, N](double res, boid a) {
@@ -214,4 +214,5 @@ data velocity_data_analysis(std::vector<boid> const& v, int const N)
       });
   auto sigma(std::sqrt(sum / (N - 1)));
   return {mean, sigma};
-}*/
+}
+
