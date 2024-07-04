@@ -69,7 +69,7 @@ velocity operator+(velocity const&, velocity const&);
 
 velocity operator-(velocity const&, velocity const&);
 
-velocity operator*(double const, velocity const&);
+velocity operator*(double, velocity const&);
 
 class boid
 {
@@ -80,34 +80,36 @@ class boid
 
 double distance(position const&, position const&);
 
-velocity sum_of_velocity(velocity const&, velocity const&);
+position cm(std::vector<boid> const&, int const);
 
-position cm(std::vector<boid> const&, int);
+// velocity cohesion(std::vector<boid> const&, double const, position const&,
+// boid const&);
 
-velocity cohesion(int const N, double const, position const&, boid const&);
+velocity cohesion(std::vector<boid> const&, boid const&, double const,
+                  double const, int const);
 
-velocity cohesion(std::vector<boid> const&, int const, double const, boid const&);
+velocity alignment(std::vector<boid> const&, boid const&, double conts,
+                   double const, int const);
 
-velocity alignment(double const, boid const&, std::vector<boid> const&,
-                   int const);
+velocity separation(std::vector<boid> const&, boid const&, double const,
+                    double const);
 
-velocity separation(double const, double const, boid const&,
-                    std::vector<boid> const&);
+position random_position_generator(double const, double const);
 
-position random_position_generator(const double, const double);
+velocity random_velocity_generator(double const);
 
-velocity random_velocity_generator(const double);
+std::vector<boid> boids_generator(int const, double const, double const,
+                                  double const);
 
-std::vector<boid> boids_generator(int, const double, const double, const double);
+velocity wall_repulsion(boid&, double const, double const);
 
-velocity wall_repulsion(boid, const double, const double);
-
-std::vector<boid> update_boids(std::vector<boid> &, double const, double const,
-                               double const, double const, int const, const double, const double, const double, const double);
+std::vector<boid> update_boids(std::vector<boid> const&, double const,
+                               double const, double const, double const,
+                               double const, double const, double const,
+                               double const, double const);
 
 data position_data_analysis(std::vector<boid> const&, int const);
 
 data velocity_data_analysis(std::vector<boid> const&, int const);
-
 
 #endif
