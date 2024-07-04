@@ -6,6 +6,7 @@
 std::vector<sf::CircleShape> create_shapes(std::vector<boid> const&);
 
 void update_window(sf::RenderWindow&, std::vector<sf::CircleShape>&,
-                   std::vector<boid> const&);
+                   std::vector<boid> const&, float const min_position,
+                   float const max_position);
 
 #endif
