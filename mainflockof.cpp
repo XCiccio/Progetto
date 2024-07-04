@@ -19,13 +19,20 @@ int main()
     return 1;
   }
   assert(s >= 0);
+  std::cout << "Insert the parameter d for distance of interaction between boids \n";
+  double d;
+  std::cin >> d;
+  if (!std::cin.good()) {
+    return 1;
+  }
+  assert(d >= 0);
   std::cout << "Insert the parameter ds for minimum distance between boids \n";
   double ds;
   std::cin >> ds;
   if (!std::cin.good()) {
     return 1;
   }
-  assert(ds >= 0);
+  assert((ds >= 0) && (ds < d));
   std::cout << "Insert the parameter a for alignment \n";
   double a;
   std::cin >> a;
@@ -42,14 +49,14 @@ int main()
   assert(c >= 0);
   const double min_position{10.};
   const double max_position{790.};
-  const double max_velocity{150.};
-  const double velocity_generation{100.};
-  const double frame_rate_limit{1./60.};
+  const double max_velocity{100.};
+  const double velocity_generation{70.};
+  const double frame_rate_limit{1. / 60.};
   sf::RenderWindow window(sf::VideoMode(800, 800), "FLOCK OF BOIDS");
-  std::vector v = boids_generator(N, min_position, max_position, velocity_generation);
-  auto shapes   = create_shapes(v);
-  constexpr int frame_rate{60};
-  window.setFramerateLimit(frame_rate);
+  std::vector v =
+      boids_generator(N, min_position, max_position, velocity_generation);
+  auto shapes = create_shapes(v);
+  window.setFramerateLimit(60);
   while (window.isOpen()) {
     sf::Event event;
     while (window.pollEvent(event)) {
@@ -57,13 +64,15 @@ int main()
         window.close();
       }
     }
-    v = update_boids(v, s, ds, a, c, N, min_position, max_position, max_velocity, frame_rate_limit);
-    update_window(window, shapes, v);
-    /*data positon_analysis  = position_data_analysis(v, N);
+    v = update_boids(v, s, d, ds, a, c, min_position, max_position,
+                     max_velocity, frame_rate_limit);
+    update_window(window, shapes, v, static_cast<float>(min_position),
+                  static_cast<float>(max_position));
+    data positon_analysis  = position_data_analysis(v, N);
     data velocity_analysis = velocity_data_analysis(v, N);
     std::cout << "\rDistanza media dal centro di massa e velocità media: "
               << positon_analysis.mean << " +/- " << positon_analysis.sigma
               << "    " << velocity_analysis.mean << " +/- "
-              << velocity_analysis.sigma;*/
+              << velocity_analysis.sigma;
   }
 }
