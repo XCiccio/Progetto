@@ -5,12 +5,6 @@
 #include <memory>
 #include <vector>
 
-struct statistics
-{
-  double mean_distance;
-  double mean_velocity;
-};
-
 struct data
 {
   double mean;
@@ -82,13 +76,10 @@ double distance(position const&, position const&);
 
 position cm(std::vector<boid> const&, int const);
 
-// velocity cohesion(std::vector<boid> const&, double const, position const&,
-// boid const&);
-
 velocity cohesion(std::vector<boid> const&, boid const&, double const,
                   double const, int const);
 
-velocity alignment(std::vector<boid> const&, boid const&, double conts,
+velocity alignment(std::vector<boid> const&, boid const&, double const,
                    double const, int const);
 
 velocity separation(std::vector<boid> const&, boid const&, double const,
