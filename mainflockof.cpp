@@ -19,7 +19,8 @@ int main()
     return 1;
   }
   assert(s >= 0);
-  std::cout << "Insert the parameter d for distance of interaction between boids \n";
+  std::cout
+      << "Insert the parameter d for distance of interaction between boids \n";
   double d;
   std::cin >> d;
   if (!std::cin.good()) {
@@ -49,9 +50,9 @@ int main()
   assert(c >= 0);
   const double min_position{10.};
   const double max_position{790.};
-  const double max_velocity{100.};
+  const double max_velocity{300.};
   const double velocity_generation{70.};
-  const double frame_rate_limit{1. / 60.};
+  const double refresh_rate{1. / 60.};
   sf::RenderWindow window(sf::VideoMode(800, 800), "FLOCK OF BOIDS");
   std::vector v =
       boids_generator(N, min_position, max_position, velocity_generation);
@@ -65,7 +66,7 @@ int main()
       }
     }
     v = update_boids(v, s, d, ds, a, c, min_position, max_position,
-                     max_velocity, frame_rate_limit);
+                     max_velocity, refresh_rate);
     update_window(window, shapes, v, static_cast<float>(min_position),
                   static_cast<float>(max_position));
     data positon_analysis  = position_data_analysis(v, N);
